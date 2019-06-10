@@ -2,21 +2,23 @@
 <html>
 <head>
 	<title>Decoraciones Ara</title>
-
-	<link rel="stylesheet" type="text/css" href="css/styles.css">
-	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
+	<!-- ***************** TEST STYLES **********-->
+		<link rel="stylesheet" type="text/css" href="../test/style_test.css">
+	<!-- ***************** TEST STYLES **********-->
+	<link rel="stylesheet" type="text/css" href="../css/styles.css">
+	<link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-	<script src="js/jquery-3.4.1.js"></script>
-	<script src="js/bootstrap.min.js"></script>
+	<script src="../js/jquery-3.4.1.js"></script>
+	<script src="../js/bootstrap.min.js"></script>
 
 </head>
 
 <header>
 		<div class="container">
-				<a href="index.html">
+				<a href="../index.html">
 					<div id="img-logo"></div>	
 				</a>
 				
@@ -37,12 +39,11 @@
 					</table>
 				</div>
 		</div>
-
-
 </header>
+
 <body>
 	<nav class="navbar navbar-expand-lg">
-	  <a style="color: black" class="navbar-brand" href="index.html">Home</a>
+	  <a style="color: black" class="navbar-brand" href="../index.html">Home</a>
 	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
 	    <span class="navbar-toggler-icon"></span>
 	  </button>
@@ -62,48 +63,57 @@
 	</nav>
 
 
+	<!-- MAIN CONTENT START -->
+	<div id="main-dec-content container">
+		<div id="main-row" class="row">
+			<div id="seleccion-opciones" class="col-sm-12 col-md-2">
+				<ul>
+					<li>
+						<span>
+							Cumpleanos
+						</span>
+					</li>
+					<li>
+						<span>
+							Bautisos
+						</span>
+					</li>
+				</ul>
+			</div>
 
-	<div id="main-content">
-		<div class="jumbotron">
-			<div class="container">
-				
+			<div class="col-sm-12 col-md-10">
+				<div id="selectable-items-row" class="row">
+						<div id="selectable-item" class="col-xs-4 col-sm-4 col-md-4 col-lg-3 center-block">
+							<a href="decoracion.html">
+								<img class="img-responsive" src="../media/images/decoraciones/deco-001-lg.png">
+								<span> Cumpleanos Senora </span>
+							</a>
+						</div>
+
+						<div id="selectable-item" class="col-xs-4 col-sm-4 col-md-4 col-lg-3 center-block">
+							<a href="#">
+								<img class="img-responsive" src="../media/images/decoraciones/deco-002-lg.png">
+								<span> Cumpleanos Senora </span>
+							</a>					
+						</div>
+
+						<div id="selectable-item" class="col-xs-4 col-sm-4 col-md-4 col-lg-3 center-block">
+							<a href="#">
+								<img class="img-responsive" src="../media/images/decoraciones/deco-003-lg.png">
+								<span> Cumpleanos Senora </span>
+							</a>					
+						</div>
+
+						<div id="selectable-item" class="col-xs-4 col-sm-4 col-md-4 col-lg-3 center-block">
+							<a href="#">
+								<img class="img-responsive" src="../media/images/decoraciones/deco-004-lg.png">
+								<span> Cumpleanos Senora </span>
+							</a>					
+						</div>
+				</div>
 			</div>
 		</div>
 
-		<div class="container">
-			<div id="home-tiles" class="row">
-				<div class="col-md-4 col-sm-6 col-xs-12">
-					<a href="decoraciones/decoraciones.html">
-						<div id="deco-tile">
-							<img src="media/images/home_deco_tile.jpeg">
-							<span>Decoraciones</span>
-						</div>
-					</a>
-				</div>
-			
-				<div class="col-md-4 col-sm-6 col-xs-12">
-					<a href="#">
-						<div id="arreglos-tile">
-							<img src="media/images/home_arreglos_tile.jpeg">
-							<span>Arreglos</span>
-						</div>
-					</a>
-				</div>
-
-				<div class="col-md-4 col-sm-6 col-xs-12">
-					<a href="#">
-						<div id="postres-tile">
-							<img src="media/images/home_postres_tile.png">
-							<span>Postres</span>
-						</div>
-					</a>
-				</div>
-
-				<div class="col-md-12 col-sm-6 col-xs-12">
-					<span>World</span>
-				</div>
-			</div>
-		</div><!-- END OF MAIN->CONTAINER -->
 	</div> <!-- END MAIN-CONTENT -->
 
 
@@ -140,7 +150,6 @@
 				</section> <!-- END SECTION->INFORMATION -->
 			</div>
 		</div>
-
 	</footer>
 
 

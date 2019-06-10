@@ -1,0 +1,150 @@
+/* TOP HOME PAGE */
+header {
+	height: 180px;
+	border-style: 1px solid black;
+	background-color: #F243C1;
+}
+
+.navbar {
+	background-color: #F243C1;
+	border: 1px solid black;
+	margin: 5px 10px 5px 10px;
+}
+
+nav .navbar-nav li a{
+  color: black !important;
+}
+
+button.navbar-toggler {
+	border-color: black;
+	padding: 7px 0px 0px 7px;
+}
+
+.navbar-toggler-icon {
+	background: url("../media/images/navbar-button.png") no-repeat !important;
+}
+
+.nav-link {
+	margin: 0px 10% 0px 10%;
+}
+
+#img-logo {
+	float: left;
+	background: url('../media/images/logo1.png') no-repeat;
+	width: 150px;
+	height: 150px;
+	margin: 10px 15px 10px 0;
+}
+
+#topnav a{
+	padding: 10px 15px 9px 15px !important;
+}
+
+#header-contact {
+	float: right;
+}
+
+.navbar-header {
+	width: 100%;
+}
+
+
+/* Main Content - HOME Page */
+.jumbotron{
+	width: 100%;
+	height: 400px;
+	margin: 0px 15px 0px 15px;
+	background: url(../media/images/jumbo.jpeg) no-repeat center center / cover;
+}
+
+#deco-tile, #postres-tile, #arreglos-tile {
+	height: 200px;
+	width: 100%;
+	position: relative;
+	overflow: hidden;
+	border: 2px solid #F243C1;
+	display: inline-block;
+}
+
+#deco-tile:hover, #postres-tile:hover, #arreglos-tile:hover {
+	opacity: 0.8
+}
+
+#deco-tile:hover span, #postres-tile:hover span, #arreglos-tile:hover span{
+	font-weight: bold;
+	font-size: 1.3em;
+}
+
+#deco-tile span, #postres-tile span, #arreglos-tile span{
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	text-align: center;
+	width: 100%;
+	text-transform: uppercase;
+  	background-color: #000;
+  	color: #fff;
+	opacity: .8;
+}
+
+#deco-tile > img, #arreglos-tile > img, #postres-tile > img {
+	display: block;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	min-height: 100%;
+	min-width: 100%;
+	transform: translate(-50%, -50%);
+}/******* END OF HOME PAGE->MAIN CONTENT */
+
+
+/* FOOTER */
+.panel-footer {
+	margin-top: 30px;
+	background-color: #44F275;
+} /****** END FOOTER */
+
+
+/*------- DECORACIONES PAGE -----------------*/
+
+#main-row.row {
+	margin: 0px 10px 0px 10px;
+}
+
+#selectable-item:hover{
+	opacity: 0.6;
+}
+
+#selectable-item:hover span{
+	font-weight: bold;
+	font-size: 1.2em;
+}
+
+#selectable-item {
+	padding-top: 10px;
+	position: relative;
+	overflow: hidden;
+	text-align: center;
+	border: 2px solid #F243C1;
+	display: inline-block;
+}
+
+#selectable-item span{
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	text-align: center;
+	width: 100%;
+	text-transform: uppercase;
+  	background-color: #44F275;
+  	color: #fff;
+	opacity: .8;
+}
+
+#selectable-item > img {
+	display: block;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+/* DECORACIOENS->ITEMS */
