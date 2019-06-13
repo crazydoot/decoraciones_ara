@@ -2,43 +2,58 @@
 <html>
 <head>
 	<title>Decoraciones Ara</title>
-	<!-- ***************** TEST STYLES **********-->
-		<link rel="stylesheet" type="text/css" href="../test/style_test.css">
-	<!-- ***************** TEST STYLES **********-->
-	<link rel="stylesheet" type="text/css" href="../css/styles.css">
-	<link rel="stylesheet" type="text/css" href="../css/bootstrap.min.css">
+
+	<link rel="stylesheet" type="text/css" href="css/styles.css">
+	<link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 
 
-	<script src="../js/jquery-3.4.1.js"></script>
-	<script src="../js/bootstrap.min.js"></script>
+	<script src="js/jquery-3.4.1.js"></script>
+	<script src="js/bootstrap.min.js"></script>
 
+	<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
 </head>
 
 <header>
 		<div class="container">
-				<a href="../index.html">
+				<a href="index.html">
 					<div id="img-logo"></div>	
 				</a>
 				
 
-				<div id="header-contact">
-					<table style="margin: 15px 13px 0px 13px;">
+				<div id="header-contact" class="d-none d-sm-block">
+					<table id="header-contact-table" style="margin: 15px 13px 0px 13px;">
 						<tr>
-							<td><a href="tel:6861629278">6861629278</a></td>
+							<td>
+								<a id="contact-tel" href="tel:6861629278">
+									<span>
+										6861629278
+									</span>
+								</a>
+							</td>
 						</tr>
 
 						<tr>
-							<td>
-								<a href="#">Email</a>
-								<a href="#">Insta</a>
-								<a href="#">FB</a>
+							<td id="contact-td">
+								<a class="contact-icon" href="#" target="_blank">
+									<i class="far fa-envelope"></i>
+								</a>
+
+								<a class="contact-icon" href="" target="_blank">
+									<i class="fab fa-instagram"></i>
+								</a>
+								
+								<a class="contact-icon" href="https://www.facebook.com/Aras-Decoracion-y-Mesas-De-Postres-1823465067690150/" target="_blank">
+									<i class="fab fa-facebook-square"></i>
+								</a>
 							</td>
 						</tr>
 					</table>
 				</div>
 		</div>
+
+
 </header>
 
 <body>
@@ -76,21 +91,27 @@
 			<div class="row">
 				<section class="col-sm-3">
 					<h4>Contactanos</h4>
-					<ul>
+					<ul id="footer-contact-list">
 						<li>
-							<a href="tel:6861169278"><span>6861169278</span></a>
+							<a href="tel:6861169278">
+								<i class="fas fa-phone"></i>
+								<span>6861169278</span>
+							</a>
 						</li>
 						<li>
 							<a href="https://www.facebook.com/Aras-Decoracion-y-Mesas-De-Postres-1823465067690150/" target="_blank">
+								<i class="fab fa-facebook-square"></i>
 								<span>Facebook</span>
 							</a>
 						</li>
 						<li>
 							<a href="#">
+								<i class="fab fa-instagram"></i>
 								<span>Instagram</span>
 							</a>
 						</li>
 						<li>
+							<i class="fas fa-envelope"></i>
 							<span>Email</span>
 						</li>
 					</ul>
@@ -98,11 +119,12 @@
 
 				<section class="col-sm-3">
 					<h4>Informacion</h4>
-					<p>*Envios entre 6 AM y 7 PM</p>
+					<p>*Envios entre 10 AM y 7 PM</p>
 					<p>*Arreglos florares deven ser ordenados 5 dias antes the entrega. </p>
 				</section> <!-- END SECTION->INFORMATION -->
 			</div>
 		</div>
+
 	</footer>
 
 
