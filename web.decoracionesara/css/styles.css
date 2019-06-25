@@ -178,13 +178,12 @@ h4 {
 
 #selectable-item:hover span{
 	font-weight: bold;
-	font-size: 1.2em;
+	font-size: 18px;
 }
 
 #selectable-item {
 	padding-top: 10px;
 	position: relative;
-	min-height: 200px;
 	overflow: hidden;
 	text-align: center;
 	display: inline-block;
@@ -203,10 +202,10 @@ h4 {
 	opacity: .8;
 }
 
-#selectable-item > img {
-	display: block;
+.img-responsive {
 	margin-left: auto;
 	margin-right: auto;
+	width: 100%;
 }
 #opciones-navbar {
 	padding-top: 8px;

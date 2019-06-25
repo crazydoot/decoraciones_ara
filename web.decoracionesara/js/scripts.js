@@ -7,6 +7,7 @@ var homeHTML = "snippets/home-snippet.html";
 var allCategoriesURL = "";
 var categoriesTitleUrl = "snippets/category-title.html";
 var categoryHTML  = "snippets/category-snippet.html";
+var singleItemHtmlUrl = "snippets/singleItem-snippet.html";
 
 var insertHTML = function (selector, html) {
 	var element = document.querySelector(selector);
@@ -34,9 +35,12 @@ document,addEventListener("DOMContentLoaded", function(event){
 	false);
 });
 
-aradeco.loadCategory = function () {
+// Takes the category ID and loads the items for that category
+// by updating the main content only.
+aradeco.loadCategory = function (catID) {
+	console.log("CAT loadCategory: ", catID);
 	showLoading("#main-content");
-	$ajaxUtils.sendGetRequest(2, buildAndShowCategoriesHTML, true)
+	$ajaxUtils.sendGetRequest(catID, buildAndShowCategoriesHTML, true)
 }
 
 
@@ -73,10 +77,15 @@ function buildCategoriesViewHtml(categories, categoriesTitleHtml, categoryHtml) 
   	console.log("Looping: ", i);
     // Insert category values
     var html = categoryHtml;
-    var name = "" + categories[i].title;
-    var category = categories[i].title;
-    html = insertProperty(html, "name", name);
+    var title = "" + categories[i].title;
+    var category = categories[i].category;
+    var imgSrc = categories[i].imgSrc;
+    var itmID = categories[i].itemID;
+
+    html = insertProperty(html, "title", title);
     html = insertProperty(html, "category", category);
+    html = insertProperty(html, "itmID", itmID);
+    html = insertProperty(html, "img", imgSrc);
     finalHtml += html;
   }
 
@@ -85,28 +94,86 @@ function buildCategoriesViewHtml(categories, categoriesTitleHtml, categoryHtml) 
 }
 
 
+aradeco.loadItem = function (itemID) {
+	showLoading("#main-content");
+	console.log(itemID);
+	$ajaxUtils.sendGetRequest(itemID, buildAndShowSingleItem, true);
+}
+
+function buildAndShowSingleItem(itemObj) {
+	$ajaxUtils.sendGetRequest(singleItemHtmlUrl, function(singleItemHtml){
+
+		finalHtml = "<div class='row'>";
+
+		var html = singleItemHtml;
+		var title = itemObj.title;
+		var desc = itemObj.des;
+		var category = itemObj.category;
+		var imgSrc = itemObj.imgSrc;
+
+		html = insertProperty(html, "category", category);
+		html = insertProperty(html, "img", imgSrc);
+
+		console.log(html);
+		finalHtml += html;
+
+		finalHtml += "</div>";
+		insertHTML("#main-content", finalHtml);
+	});
+
+
+}
+
+
+
+
+
+
+
+
+
 global.$aradeco = aradeco;
 
 })(window);
 
 
 function testFirebase(){
-	/*var db = firebase.firestore();
+	var db = firebase.firestore();
+/*	
+	var newT = "arreglo-00";
+
+	for(var i =0; i < 8; i++){
+		var newT = curr + i;
+		var currRef = db.collection("categorias").doc("postres").collection("item-info").doc(newT);
+		currRef.update({
+			img: firebase.firestore.FieldValue.arrayRemove("media/images/postres/",newT,".jpg")
+		});
+	}*/
 	
-	var batch = db.batch();
+
+/*	var batch = db.batch();
 
 	var docTitle = "arreglo-00";
 	var docData = {
-		title: "TITLE",
+		category: "arreglos",
 		des: "SAME",
-		src:""
+		imgSrc: "arreglo-00",
+		itemID: 2000,
+		title: "title"
 	}
 	var i =0;
-	for(;i<10;i++){
+	for(;i<8;i++){
 		var newTitle = docTitle + i;
-		var currRef = db.collection("categorias").doc("arreglos").collection("imagenes").doc(newTitle);
+		var imgSrc = docData.imgSrc + i;
+		var itmID = docData.itemID + i;
+		docData.imgSrc = imgSrc + ".jpg";
+		docData.itemID = itmID;
+
+		var currRef = db.collection("categorias").doc(docData.category).collection("item-info").doc(newTitle);
 		batch.set(currRef, docData)
 		console.log("WORKING" + newTitle + "\n")
+		docData.imgSrc = "arreglo-00";
+		docData.itemID = 2000;
 	}
 
 	batch.commit().then(function(){
@@ -116,7 +183,7 @@ function testFirebase(){
 
 
 	/*
-	var newRef = db.doc("categorias/arreglos/imagenes/arreglo-001")
+	var newRef = db.doc("categorias/postres/imagenes/arreglo-001")
 	newRef.get().then(function (doc) {
 		var data = doc.data();
 		console.log(JSON.stringify(data) + ":::::::::::::::");

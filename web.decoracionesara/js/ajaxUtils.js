@@ -50,9 +50,11 @@ ajaxUtils.sendGetRequest =
 // function if response is ready
 // and not an error
 function handleResponse(request, responseHandler, isFirestore) {
-  if(isFirestore){
+  if(isFirestore && (request <= 10)){
     getFirestoreCategories(request, responseHandler);
     console.log("In handleResponse: request=",request);
+  } else if (isFirestore && (request > 10)){
+    getFiresStoreItem(request, responseHandler);
   } else if ((request.readyState == 4) && (request.status == 200)) {
       responseHandler(request.responseText);
   }
@@ -62,30 +64,63 @@ function handleResponse(request, responseHandler, isFirestore) {
 //
 //
 //
-function getFirestoreCategories(cat, handler){
+function getFirestoreCategories(catID, handler){
   var categoryDataList = [];
   var category;
-  switch(cat){
+  console.log("CAT b: ", catID);
+  switch(catID){
     case 1: category = "decoraciones"; break;
     case 2: category = "arreglos"; break;
     case 3: category = "postres"; break;
     default: break;
   }
-  console.log("CAT: ", category);
-  var i = 0;
-  var categoryRef = dataBase.collection("categorias").doc(category).collection("imagenes");
+
+  var categoryRef = dataBase.collection("categorias").doc(category).collection("tile-info");
   categoryRef.get().then(function(querySnapshot){
     querySnapshot.forEach(function(doc){
       //handler(doc.data());
       categoryDataList.push(doc.data());
-      console.log("Printing Single Item#", i ,": ",doc.data());
-      i++;
     });
-    console.log("DATA LIST: \n", categoryDataList);
     handler(categoryDataList);
   }).catch(function(err){
     console.log("ERROR: ", err);
   });
+}
+
+function getFiresStoreItem(itemID, handler){
+  var category;
+  var idPre;
+  var id;
+  console.log("INSIDE getFiresStoreItem: itmID="+ itemID);
+
+  if(itemID > 999 && itemID < 1999) {
+    console.log(typeof(parseInt(itemID)));
+    category = "decoraciones";
+    idPre ="deco";
+  } else if (itemID > 1999 && itemID < 2999){ 
+    console.log("IN 2000's");
+    category = "arreglos";
+    idPre = "arreglo"
+  } else if (itemID > 2999 && itemID < 3999){ 
+    category = "postres";
+    idPre = "postre"
+  }
+
+  id = resolveID(parseInt(itemID));
+  console.log("Before dbRref: " + idPre + "---" + id);
+  var dbRef = dataBase.collection("categorias").doc(category).collection("item-info").doc(idPre+id);
+  dbRef.get().then(function(doc){
+    console.log(doc.data()+ "..........");
+    handler(doc.data());
+  });
+}
+
+function resolveID(itemID){
+  if(itemID%1000 == 0){
+    return "-000";
+  } else if ((itemID%1000) < 10) {
+    return "-00"+(itemID%1000);
+  }
 }
 
 // Expose utility to the global object
