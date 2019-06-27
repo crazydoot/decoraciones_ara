@@ -15,6 +15,7 @@ var insertHTML = function (selector, html) {
 }
 
 
+
 var showLoading = function (selector) {
 	var html = "<div class='text-center'>";
 	html += "<img src='media/loaging.gif'></div>";
@@ -27,7 +28,7 @@ var insertProperty = function (string, propName, propValue){
 	return string;
 }
 
-document,addEventListener("DOMContentLoaded", function(event){
+document.addEventListener("DOMContentLoaded", function(event){
 	showLoading("#main-content");
 	$ajaxUtils.sendGetRequest(homeHTML, function (responseText) {
 		document.querySelector("#main-content").innerHTML = responseText;
@@ -81,11 +82,13 @@ function buildCategoriesViewHtml(categories, categoriesTitleHtml, categoryHtml) 
     var category = categories[i].category;
     var imgSrc = categories[i].imgSrc;
     var itmID = categories[i].itemID;
+    var options = categories[i].opciones[0];
 
     html = insertProperty(html, "title", title);
     html = insertProperty(html, "category", category);
     html = insertProperty(html, "itmID", itmID);
     html = insertProperty(html, "img", imgSrc);
+    html = insertProperty(html, "opciones", options);
     finalHtml += html;
   }
 
@@ -120,11 +123,61 @@ function buildAndShowSingleItem(itemObj) {
 		finalHtml += "</div>";
 		insertHTML("#main-content", finalHtml);
 	});
-
-
 }
 
+aradeco.loadOptions = function(checkBox) {
+	const optionsList = ["NN", "CT"];
+	var numChecked = document.querySelectorAll('input[type="checkbox"]:checked').length; //number of curr checked boxes
 
+	if(checkBox.checked){
+		console.log("Selected");	
+
+    	if(numChecked == 1){//Only Display checked option, removed the rest
+    		for(var i=0; i < optionsList.length; i++){
+    			if(!(checkBox.value == optionsList[i]) && ($("."+optionsList[i]).length)) {
+    				$("."+optionsList[i]).remove();
+    			}
+    		}
+    	}
+
+	} else {
+		console.log("Unselected");
+
+
+		if(numChecked == 0){
+			console.log("No Boxes Selected");
+			$ajaxUtils.sendGetRequest(checkBox.value, buildAndShowOptions, true);
+		}
+	}
+}
+
+function buildAndShowOptions(optionsList){
+	console.log(JSON.stringify(optionsList));
+	$ajaxUtils.sendGetRequest(categoryHTML, function (responseText) {
+		var numItem = optionsList.length;
+		var finalHtml;
+		for(var i=0; i < numItem; i++){
+
+			var html = responseText;
+			var title = optionsList[i].title;
+			var category = optionsList[i].category;
+			var imgSrc = optionsList[i].imgSrc;
+			var itmID = optionsList[i].itemID;
+			var options = optionsList[i].opciones;
+
+			html = insertProperty(html, "title", title);
+			html = insertProperty(html, "category", category);
+			html = insertProperty(html, "img", imgSrc);
+			html = insertProperty(html, "itmID", itmID);
+			html = insertProperty(html, "opciones", options);
+
+			finalHtml += html;
+		}
+		console.log("In buildAndShowOptions: numItem = " + numItem);
+		$("#items-section").append(finalHtml);
+	},
+	false);
+}
 
 
 
@@ -138,18 +191,30 @@ global.$aradeco = aradeco;
 
 
 function testFirebase(){
-	var db = firebase.firestore();
-/*	
-	var newT = "arreglo-00";
+  decoList = ["NN", "CT"];
 
-	for(var i =0; i < 8; i++){
-		var newT = curr + i;
-		var currRef = db.collection("categorias").doc("postres").collection("item-info").doc(newT);
-		currRef.update({
-			img: firebase.firestore.FieldValue.arrayRemove("media/images/postres/",newT,".jpg")
-		});
-	}*/
+  if($.inArray("NN", decoList) != -1){
+    console.log("OKAI")
+  }
+/*	var db = firebase.firestore();
 	
+	var newT = "deco-00";
+
+	for(var i =0; i < 10; i++){
+		var newT = newT + i;
+		var currRef = db.collection("categorias").doc("decoraciones").collection("tile-info").doc(newT);
+		if(i < 5){
+			currRef.update({
+				opciones: firebase.firestore.FieldValue.arrayUnion("NN")
+			});
+		} else {
+			currRef.update({
+				opciones: firebase.firestore.FieldValue.arrayUnion("CT")
+			});
+		}
+		newT = "deco-00";
+	}
+*/	
 
 /*	var batch = db.batch();
 

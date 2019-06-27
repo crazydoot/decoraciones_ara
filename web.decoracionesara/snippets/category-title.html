@@ -1,36 +1,30 @@
 <div id="main-row" class="row">
-	<!-- Sorting Side Bar Only Visible in large screens -->
-	<div id="opciones-navbar" class="col-lg-2 col-md-12 d-none d-lg-block">
-		    
-		    <h5>Opciones</h5>				    	
-			<ul class="nav flex-lg-column text-sm-center sticky-top">
-		        <li class="nav-item">
-		          <a class="nav-link active" href="#">Active</a>
-		        </li>
-		        <li class="nav-item">
-		          <a class="nav-link" href="#">Link</a>
-		        </li>
-		        <li class="nav-item">
-		          <a class="nav-link" href="#">Link</a>
-		        </li>
-		        <li class="nav-item">
-		          <a class="nav-link" href="#">Disabled</a>
-		        </li>
-		      </ul>
-	</div>
+  	<!-- Sorting Side Bar Only Visible in large screens -->
+  	<div class="col-lg-2 col-md-12 d-none d-lg-block">
+        
+    	<legend><b>Opciones</b></legend>              
+    	<ul class="nav flex-lg-column text-sm-center sticky-top">
+		    <li>
+    	        <label>Ninos/Ninas</label> <input type="checkbox" name="selected" value="NN" onclick="$aradeco.loadOptions(this);">
+	        </li>
+    	    <li>
+        	    <label>Caricaturas</label> <input type="checkbox" name="selected" value="CT" onclick="$aradeco.loadOptions(this);">
+        	</li>
+        </ul>
+  	</div>
 
 	<!-- Sorting NavBar Only Visible in screens smaller than Large screens -->
 	<div id="opciones-navbar" class="col-12 d-none d-sm-block d-lg-none">
 		<div id="nav-btn-container">
-			<button class="btn btn-primary btn-block" type="button" data-toggle="collapse" data-target="#collapsed-options" aria-expanded="false" aria-controls="collapseExample">
-				Opciones
-			</button>
+		  <button class="btn btn-primary btn-block" type="button" data-toggle="collapse" data-target="#collapsed-options" aria-expanded="false" aria-controls="collapseExample">
+		    Opciones
+		  </button>
 		</div>
 
 		<div class="collapse" id="collapsed-options">
-			<div class="card card-body">
-				adflasdjflajflajfjas
-			</div>
+		  <div class="card card-body">
+		    adflasdjflajflajfjas
+		  </div>
 		</div>
 	</div>
-<!-- Missing losing div, added dynamycally at loading -->
+	<!-- Missing losing div, added dynamycally at loading -->

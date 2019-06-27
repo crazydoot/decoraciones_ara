@@ -7,7 +7,14 @@ var ajaxUtils = {};
 var dataBase = firebase.firestore();
 ajaxUtils.firestoreDB = dataBase;
 
+//Utility
+function getCategoryFromOption(option){
+  decoList = ["NN", "CT"];
 
+  if($.inArray(option, decoList) != -1){
+    return 1;
+  }
+}
 
 // Returns an HTTP request object
 function getRequestObject() {
@@ -55,6 +62,9 @@ function handleResponse(request, responseHandler, isFirestore) {
     console.log("In handleResponse: request=",request);
   } else if (isFirestore && (request > 10)){
     getFiresStoreItem(request, responseHandler);
+  } else if(isFirestore && ((typeof(request)=="string") && (request.length == 2))){
+    console.log("In handleResponse:Firestore Options");
+    getFirestoreOptions(request, responseHandler);
   } else if ((request.readyState == 4) && (request.status == 200)) {
       responseHandler(request.responseText);
   }
@@ -122,6 +132,36 @@ function resolveID(itemID){
     return "-00"+(itemID%1000);
   }
 }
+
+
+function getFirestoreOptions(request, handler){
+  var optionDataList = [];
+  var catID = getCategoryFromOption(request);
+  var optID = request;
+  var category;
+  switch(catID){
+    case 1: category = "decoraciones"; break;
+    case 2: category = "arreglos"; break;
+    case 3: category = "postres"; break;
+    default: break;
+  }
+
+  var categoryRef = dataBase.collection("categorias").doc(category).collection("tile-info");
+  categoryRef.get().then(function(querySnapshot){
+    querySnapshot.forEach(function(doc){
+      //handler(doc.data());
+      if($.inArray(optID, doc.data().opciones)){
+        console.log("in getFirestoreOptions about to add doc.data()=" + doc.data());
+        optionDataList.push(doc.data());
+      }
+    });
+    console.log("IN getFirestoreOptions before handler()");
+    handler(optionDataList);
+  }).catch(function(err){
+    console.log("ERROR: ", err);
+  });
+}
+
 
 // Expose utility to the global object
 global.$ajaxUtils = ajaxUtils;
