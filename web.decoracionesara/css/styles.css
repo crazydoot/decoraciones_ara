@@ -32,6 +32,17 @@ a[href^="tel:"] {
 	color: white;
 	font-weight: bolder;
 } 
+#call-btn {
+	border: 3px solid #F243C1;
+	margin: 0px 10px 5px 10px;
+}
+
+#call-btn > a {
+	display: block;
+	font-size: 1.5em;
+    background-color: #44F275;
+	color: #F243C1;
+}
 
 header {
 	height: 180px;
@@ -42,6 +53,7 @@ header {
 .navbar {
 	background-color: #F243C1;
 	border: 1px solid black;
+	width: 100%;
 	margin: 5px 10px 5px 10px;
 }
 
@@ -59,9 +71,10 @@ button.navbar-toggler {
 	background: url("../media/images/navbar-button.png") no-repeat !important;
 }
 
-.nav-link {
-	margin: 0px 30% 0px 30%;
+.nav-item {
+	margin: 0px 25px 0px 25px;
 	font-size: 1.5em;
+	min-width: 135px;
 }
 
 #img-logo {
@@ -83,8 +96,6 @@ button.navbar-toggler {
 
 
 /****** Main Content - HOME Page *********/
-.jumbotron{
-}
 
   /* Make the image fully responsive */
 .carousel-inner img {
@@ -252,19 +263,27 @@ h4 {
 	.contact-icon {
 		font-size: 1.6em;
 	}
+
+	#home-carousel .carousel-inner .active img{
+		max-height: 950px;
+	}
 }
 
 /***** Medium up to Large ------*/
-@media (min-width: 769px) and (max-width: 992px) {
+@media (min-width: 768px) and (max-width: 992px) {
 	.contact-icon {
 		font-size: 1.5em;
 	}
 }
 
 /****** Small ----------*/
-@media (max-width: 769px) {
+@media (max-width: 768px) {
 	.contact-icon {
 		font-size: 1.5em;
 		margin: auto;
 	}
+	.panel-footer section {
+    	margin-bottom: 30px;
+    	text-align: center;
+    }
 }

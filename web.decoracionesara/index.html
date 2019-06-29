@@ -53,7 +53,9 @@
 
 </header>
 <body>
-	<nav class="navbar navbar-expand-lg">
+
+	</div>
+	<nav class="navbar navbar-expand-md">
 	  <a style="color: black" class="navbar-brand" href="index.html">Home</a>
 	  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
 	    <span class="navbar-toggler-icon"></span>
@@ -69,16 +71,19 @@
 	      <li class="nav-item">
 	        <a class="nav-link" href="#" onclick="$aradeco.loadCategory(3);">Postres</a>
 	      </li>
-	      <li style="margin-left: 20px;">
+	      <!--<li style="margin-left: 20px;">
 	      	<input type="textfield"/>
 	      	<button id="test-fb" onclick="testFirebase();"> TEST </button>
-	      </li>
+	      </li>-->
 	    </ul>
 	  </div>
 	</nav>
-
-
-
+	<div id="call-btn" class="d-block d-sm-none">
+	    <a class="btn" href="tel:410-602-5008">
+	    	<i class="fas fa-phone"></i>
+	    	410-602-5008
+	    </a>
+	</div>
 	<div id="main-content" class="container">
 
 	</div> <!-- END MAIN-CONTENT -->
@@ -88,7 +93,7 @@
 	<footer class="panel-footer">
 		<div class="container">
 			<div class="row">
-				<section class="col-sm-3">
+				<section class="col-md-4">
 					<h4>Contactanos</h4>
 					<ul id="footer-contact-list">
 						<li>
@@ -111,15 +116,17 @@
 						</li>
 						<li>
 							<i class="fas fa-envelope"></i>
-							<span>Email</span>
+							<a href="mailto:arasdecoraciones@gmail.com">arasdecoraciones@gmail.com</a>
 						</li>
 					</ul>
+					<hr class="visible-xs">
 				</section> <!-- END SECTION->CONTACTO -->
 
-				<section class="col-sm-3">
+				<section class="col-md-4">
 					<h4>Informacion</h4>
 					<p>*Envios entre 10 AM y 7 PM</p>
 					<p>*Arreglos florares deven ser ordenados 5 dias antes the entrega. </p>
+
 				</section> <!-- END SECTION->INFORMATION -->
 			</div>
 		</div>
