@@ -198,6 +198,7 @@ h4 {
 	overflow: hidden;
 	text-align: center;
 	display: inline-block;
+	min-height: 200px;
 }
 
 #selectable-item span{
@@ -215,6 +216,7 @@ h4 {
 
 .img-responsive {
 	margin-left: auto;
+	margin-top: 30px;
 	margin-right: auto;
 	width: 100%;
 }

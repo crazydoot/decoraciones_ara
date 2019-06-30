@@ -55,6 +55,8 @@ function buildAndShowCategoriesHTML (categories) {
 	  // Load title snippet of categories page
 		$ajaxUtils.sendGetRequest(categoriesTitleUrl, function (categoriesTitleHtml) {
 	    	  // Retrieve single category snippet
+	    	console.log("Passing: " + categories);
+	    	categoriesTitleHtml = buildOptionsView(categoriesTitleHtml, categories);
 	    	$ajaxUtils.sendGetRequest(categoryHTML, function (categoryHtml) {
 	      		var categoriesViewHtml = buildCategoriesViewHtml(categories, categoriesTitleHtml, categoryHtml);
 	        	insertHTML("#main-content", categoriesViewHtml);
@@ -64,6 +66,61 @@ function buildAndShowCategoriesHTML (categories) {
 	    false);
 	}
 }
+
+function buildOptionsView(categoriesTitleHtml, categories){
+	console.log("In buildOptionsView: Categories: " + categories[0].category);
+	var finalHtml = "";
+	const arreglosOptions = {
+		title: ["Rosas", "Pareja"],
+		code: ["RS", "SO"]
+	};
+
+	const decoOptions = {
+		title: ["Cartoons", "Ninos/Ninas"],
+		code: ["CT", "NN"]
+	};
+
+	const postreOptions = {
+		title: ["Dulce", "Salado"],
+		code: ["SW", "ST"]
+	};
+
+	var currOptions;
+
+	switch(categories[0].category){
+		case 'decoraciones':
+			currOptions = decoOptions;
+			console.log("OK" + currOptions);
+			break;
+		case 'arreglos':
+			currOptions = arreglosOptions;
+			break;
+		case 'postres':
+			currOptions = postreOptions;
+			break;
+		default:
+			currOptions = [];
+	}
+
+	for(var i=0; i < currOptions.title.length; i++){
+		var html = "<li> <label> {{opcion}} </label> \
+						<input type='checkbox' name='selected' value='{{OptID}}' \
+						onclick='$aradeco.loadOptions(this);'> 			\
+					</li>";
+	
+		html = insertProperty(html, "opcion", currOptions.title[i]);
+		html = insertProperty(html, "OptID", currOptions.code[i]);
+
+		finalHtml += html;
+	}
+
+	console.log("FINAL HTML: \n" + finalHtml);
+
+	var categoriesTitleUpdatedHtml = insertProperty(categoriesTitleHtml, "list-items", finalHtml);
+
+	return categoriesTitleUpdatedHtml;
+}
+
 
 
 // Using categories data and snippets html
@@ -196,25 +253,25 @@ function testFirebase(){
   if($.inArray("NN", decoList) != -1){
     console.log("OKAI")
   }
-/*	var db = firebase.firestore();
+	var db = firebase.firestore();
 	
-	var newT = "deco-00";
+	var newT = "postre-00";
 
-	for(var i =0; i < 10; i++){
+	for(var i =0; i < 2; i++){
 		var newT = newT + i;
-		var currRef = db.collection("categorias").doc("decoraciones").collection("tile-info").doc(newT);
+		var currRef = db.collection("categorias").doc("postres").collection("tile-info").doc(newT);
 		if(i < 5){
 			currRef.update({
-				opciones: firebase.firestore.FieldValue.arrayUnion("NN")
+				opciones: firebase.firestore.FieldValue.arrayUnion("ST")
 			});
 		} else {
 			currRef.update({
-				opciones: firebase.firestore.FieldValue.arrayUnion("CT")
+				opciones: firebase.firestore.FieldValue.arrayUnion("SW")
 			});
 		}
-		newT = "deco-00";
+		newT = "postre-00";
 	}
-*/	
+	
 
 /*	var batch = db.batch();
 
