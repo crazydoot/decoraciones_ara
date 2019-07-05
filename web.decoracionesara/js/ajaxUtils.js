@@ -42,6 +42,7 @@ ajaxUtils.sendGetRequest =
       var request = getRequestObject();
       request.onreadystatechange = 
       function() { 
+              console.log("In handleResponse: requestUrl=" + requestUrl);
         handleResponse(request, responseHandler); 
       };
       request.open("GET", requestUrl, true);
@@ -77,7 +78,6 @@ function handleResponse(request, responseHandler, isFirestore) {
 function getFirestoreCategories(catID, handler){
   var categoryDataList = [];
   var category;
-  console.log("CAT b: ", catID);
   switch(catID){
     case 1: category = "decoraciones"; break;
     case 2: category = "arreglos"; break;
@@ -104,11 +104,9 @@ function getFiresStoreItem(itemID, handler){
   console.log("INSIDE getFiresStoreItem: itmID="+ itemID);
 
   if(itemID > 999 && itemID < 1999) {
-    console.log(typeof(parseInt(itemID)));
     category = "decoraciones";
     idPre ="deco";
   } else if (itemID > 1999 && itemID < 2999){ 
-    console.log("IN 2000's");
     category = "arreglos";
     idPre = "arreglo"
   } else if (itemID > 2999 && itemID < 3999){ 
@@ -120,7 +118,6 @@ function getFiresStoreItem(itemID, handler){
   console.log("Before dbRref: " + idPre + "---" + id);
   var dbRef = dataBase.collection("categorias").doc(category).collection("item-info").doc(idPre+id);
   dbRef.get().then(function(doc){
-    console.log(doc.data()+ "..........");
     handler(doc.data());
   });
 }
@@ -130,6 +127,8 @@ function resolveID(itemID){
     return "-000";
   } else if ((itemID%1000) < 10) {
     return "-00"+(itemID%1000);
+  } else if ((itemID%1000) >= 10){
+    return "-0"+(itemID%1000);
   }
 }
 

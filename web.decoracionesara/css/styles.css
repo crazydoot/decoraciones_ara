@@ -50,16 +50,28 @@ header {
 	background-color: #F243C1;
 }
 
-.navbar {
-	background-color: #F243C1;
+#bar-wrap {
+	background-color: white;
+	padding: 5px 0px 5px 0px;
+}
+
+#main-bar {
+	background: linear-gradient(89.84deg, rgba(248, 248, 248, 0.5) 30.55%, 
+		rgba(255, 255, 255, 0) 100%, rgba(250, 250, 250, 0.34122) 80%), #F243C1;
 	border: 1px solid black;
 	width: 100%;
-	margin: 5px 10px 5px 10px;
+	margin: 0px 10px 0px 10px;
+}
+
+#v-hr {
+	border-left: 0.1px solid #000;
+	height: 40px;
+	margin-top: 7px;
 }
 
 nav .navbar-nav li a{
   color: black !important;
-  text-align: center;
+  text-align: centers;
 }
 
 button.navbar-toggler {
@@ -74,7 +86,6 @@ button.navbar-toggler {
 .nav-item {
 	margin: 0px 25px 0px 25px;
 	font-size: 1.5em;
-	min-width: 135px;
 }
 
 #img-logo {
@@ -199,6 +210,7 @@ h4 {
 	text-align: center;
 	display: inline-block;
 	min-height: 200px;
+	max-height: 250px;
 }
 
 #selectable-item span{

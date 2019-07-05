@@ -39,7 +39,6 @@ document.addEventListener("DOMContentLoaded", function(event){
 // Takes the category ID and loads the items for that category
 // by updating the main content only.
 aradeco.loadCategory = function (catID) {
-	console.log("CAT loadCategory: ", catID);
 	showLoading("#main-content");
 	$ajaxUtils.sendGetRequest(catID, buildAndShowCategoriesHTML, true)
 }
@@ -55,7 +54,6 @@ function buildAndShowCategoriesHTML (categories) {
 	  // Load title snippet of categories page
 		$ajaxUtils.sendGetRequest(categoriesTitleUrl, function (categoriesTitleHtml) {
 	    	  // Retrieve single category snippet
-	    	console.log("Passing: " + categories);
 	    	categoriesTitleHtml = buildOptionsView(categoriesTitleHtml, categories);
 	    	$ajaxUtils.sendGetRequest(categoryHTML, function (categoryHtml) {
 	      		var categoriesViewHtml = buildCategoriesViewHtml(categories, categoriesTitleHtml, categoryHtml);
@@ -90,7 +88,6 @@ function buildOptionsView(categoriesTitleHtml, categories){
 	switch(categories[0].category){
 		case 'decoraciones':
 			currOptions = decoOptions;
-			console.log("OK" + currOptions);
 			break;
 		case 'arreglos':
 			currOptions = arreglosOptions;
@@ -113,9 +110,6 @@ function buildOptionsView(categoriesTitleHtml, categories){
 
 		finalHtml += html;
 	}
-
-	console.log("FINAL HTML: \n" + finalHtml);
-
 	var categoriesTitleUpdatedHtml = insertProperty(categoriesTitleHtml, "list-items", finalHtml);
 
 	return categoriesTitleUpdatedHtml;
@@ -132,7 +126,6 @@ function buildCategoriesViewHtml(categories, categoriesTitleHtml, categoryHtml) 
 
   // Loop over categories
   for (var i = 0; i < categories.length; i++) {
-  	console.log("Looping: ", i);
     // Insert category values
     var html = categoryHtml;
     var title = "" + categories[i].title;
@@ -156,7 +149,6 @@ function buildCategoriesViewHtml(categories, categoriesTitleHtml, categoryHtml) 
 
 aradeco.loadItem = function (itemID) {
 	showLoading("#main-content");
-	console.log(itemID);
 	$ajaxUtils.sendGetRequest(itemID, buildAndShowSingleItem, true);
 }
 
@@ -171,10 +163,10 @@ function buildAndShowSingleItem(itemObj) {
 		var category = itemObj.category;
 		var imgSrc = itemObj.imgSrc;
 
+		html = insertProperty(html, "title", title);
 		html = insertProperty(html, "category", category);
 		html = insertProperty(html, "img", imgSrc);
 
-		console.log(html);
 		finalHtml += html;
 
 		finalHtml += "</div>";
@@ -187,8 +179,6 @@ aradeco.loadOptions = function(checkBox) {
 	var numChecked = document.querySelectorAll('input[type="checkbox"]:checked').length; //number of curr checked boxes
 
 	if(checkBox.checked){
-		console.log("Selected");	
-
     	if(numChecked == 1){//Only Display checked option, removed the rest
     		for(var i=0; i < optionsList.length; i++){
     			if(!(checkBox.value == optionsList[i]) && ($("."+optionsList[i]).length)) {
@@ -198,9 +188,6 @@ aradeco.loadOptions = function(checkBox) {
     	}
 
 	} else {
-		console.log("Unselected");
-
-
 		if(numChecked == 0){
 			console.log("No Boxes Selected");
 			$ajaxUtils.sendGetRequest(checkBox.value, buildAndShowOptions, true);
@@ -209,7 +196,7 @@ aradeco.loadOptions = function(checkBox) {
 }
 
 function buildAndShowOptions(optionsList){
-	console.log(JSON.stringify(optionsList));
+	//console.log(JSON.stringify(optionsList));
 	$ajaxUtils.sendGetRequest(categoryHTML, function (responseText) {
 		var numItem = optionsList.length;
 		var finalHtml;
@@ -237,8 +224,13 @@ function buildAndShowOptions(optionsList){
 }
 
 
-
-
+// Keep Navigaction var visible after scrolling past the header
+$(global).bind('scroll', function() {
+    var navHeight = 130; // custom nav height
+    ($(global).scrollTop() > navHeight) ? 
+        $('#main-bar').addClass('fixed-top') :
+        $('#main-bar').removeClass('fixed-top');
+});
 
 
 
@@ -247,20 +239,32 @@ global.$aradeco = aradeco;
 })(window);
 
 
-function testFirebase(){
-  decoList = ["NN", "CT"];
+function testFunction(){
 
-  if($.inArray("NN", decoList) != -1){
-    console.log("OKAI")
-  }
+/*	var distanceService = new google.maps.DistanceMatrixService();
+    distanceService.getDistanceMatrix({
+        origins: ['Greenwich, England'],
+        destinations: ['Stockholm, Sweden'],
+        travelMode: 'DRIVING',
+    },
+    function (response, status) {
+        if (status !== google.maps.DistanceMatrixStatus.OK) {
+            console.log('Error:', status);
+        } else {
+            console.log(response);
+            console.log((response.rows[0].elements[0].distance.text));
+        }
+    });*/
+/*
 	var db = firebase.firestore();
-	
-	var newT = "postre-00";
 
-	for(var i =0; i < 2; i++){
+	
+	var newT = "arreglo-0";
+
+	for(var i =11; i < 60; i++){
 		var newT = newT + i;
-		var currRef = db.collection("categorias").doc("postres").collection("tile-info").doc(newT);
-		if(i < 5){
+		var currRef = db.collection("categorias").doc("arreglos").collection("tile-info").doc(newT);
+		if(i < 25){
 			currRef.update({
 				opciones: firebase.firestore.FieldValue.arrayUnion("ST")
 			});
@@ -269,11 +273,31 @@ function testFirebase(){
 				opciones: firebase.firestore.FieldValue.arrayUnion("SW")
 			});
 		}
-		newT = "postre-00";
-	}
-	
+		newT = "arreglo-0";
+	}*/
 
-/*	var batch = db.batch();
+	var db = firebase.firestore();
+
+	var docTitle = "arreglo-00";
+
+	for(var i=9; i < 60; i++){
+		if(i > 9){ docTitle = "arreglo-0"; }
+		docTitle = docTitle + i;
+		var currRef = db.collection("categorias").doc("arreglos").collection("tile-info").doc(docTitle);
+
+		currRef.update({
+			itemID: (2000+i)
+		})
+		.then(function(){
+			console.log("itemID: " + itemID)
+		});
+	}
+
+
+/*	var db = firebase.firestore();
+
+
+	var batch = db.batch();
 
 	var docTitle = "arreglo-00";
 	var docData = {
@@ -283,18 +307,26 @@ function testFirebase(){
 		itemID: 2000,
 		title: "title"
 	}
-	var i =0;
-	for(;i<8;i++){
+	var i =8;
+	for(;i<60;i++){
+
+		if( i > 9){
+			docTitle = "arreglo-0";
+			docData.imgSrc = "arreglo-0"
+		}
+
 		var newTitle = docTitle + i;
 		var imgSrc = docData.imgSrc + i;
 		var itmID = docData.itemID + i;
 		docData.imgSrc = imgSrc + ".jpg";
-		docData.itemID = itmID;
+		docData.itemID = itmID+8;
 
 		var currRef = db.collection("categorias").doc(docData.category).collection("item-info").doc(newTitle);
 		batch.set(currRef, docData)
 		console.log("WORKING" + newTitle + "\n")
-		docData.imgSrc = "arreglo-00";
+		if( i > 9){
+			docData.imgSrc = "arreglo-0"
+		}
 		docData.itemID = 2000;
 	}
 
