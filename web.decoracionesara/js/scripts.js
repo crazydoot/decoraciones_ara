@@ -18,7 +18,7 @@ var insertHTML = function (selector, html) {
 
 var showLoading = function (selector) {
 	var html = "<div class='text-center'>";
-	html += "<img src='media/loaging.gif'></div>";
+	html += "<img src='media/loader.gif'></div>";
 	insertHTML(selector, html);
 }
 
@@ -42,6 +42,89 @@ aradeco.loadCategory = function (catID) {
 	showLoading("#main-content");
 	$ajaxUtils.sendGetRequest(catID, buildAndShowCategoriesHTML, true)
 }
+
+aradeco.zoomIn = function(imgID, resultID, width, height) {
+	console.log("INIT");
+
+	var img, lens, result, bck_x, bck_y, imgWidth, imgHeight;
+	img = document.getElementById(imgID);
+	result = document.getElementById(resultID);
+	/* Create lens: */
+	lens = document.createElement("DIV");
+	lens.setAttribute("class", "img-zoom-lens");
+	/* Insert lens: */
+	img.parentElement.insertBefore(lens, img);
+	/* Calculate the ratio between result DIV and lens: */
+	cx = result.offsetWidth / lens.offsetWidth;
+	cy = result.offsetHeight / lens.offsetHeight;
+
+	/* Wait for image to load, then create lense and set up zoom */
+	img.onload = function(){
+		console.log("Image WIdth:5 " + img.height);
+		console.log("Image WIdth:5 " + img.width);
+		imgWidth = img.width;
+		imgHeight = img.height;
+
+		bck_x = imgWidth*cx;
+		bck_y = imgHeight *cy;
+
+		console.log("Image bck: " + imgWidth + "---- " + imgHeight);
+
+		result.style.backgroundImage = "url('" + img.src + "')";
+		result.style.backgroundSize = (bck_x) + "px " + (bck_y) + "px";
+		/* Execute a function when someone moves the cursor over the image, or the lens: */
+		lens.addEventListener("mousemove", moveLens);
+		img.addEventListener("mousemove", moveLens);
+		/* And also for touch screens: */
+		lens.addEventListener("touchmove", moveLens);
+		img.addEventListener("touchmove", moveLens);
+
+
+		$('.img-zoom-lens').hover(function(){
+			console.log('in Hover');
+			$('#myresult').css('display', 'block');
+			$('#myresult').css('float', 'left');			
+		},
+		function (){
+			$('#myresult').css('display', 'none');
+			$('#myresult').css('float', 'none');			
+		});
+	}
+
+	function moveLens(e) {
+		var pos, x, y;
+		/* Prevent any other actions that may occur when moving over the image */
+		e.preventDefault();
+		/* Get the cursor's x and y positions: */
+		pos = getCursorPos(e);
+		/* Calculate the position of the lens: */
+		x = pos.x - (lens.offsetWidth / 2);
+		y = pos.y - (lens.offsetHeight / 2);
+		/* Prevent the lens from being positioned outside the image: */
+		if (x > img.width - lens.offsetWidth) {x = img.width - lens.offsetWidth;}
+		if (x < 0) {x = 0;}
+		if (y > img.height - lens.offsetHeight) {y = img.height - lens.offsetHeight;}
+		if (y < 0) {y = 0;}
+		/* Set the position of the lens: */
+		lens.style.left = x + "px";
+		lens.style.top = y + "px";
+		/* Display what the lens "sees": */
+		result.style.backgroundPosition = "-" + (x * cx) + "px -" + (y * cy) + "px";
+	}
+	function getCursorPos(e) {
+		var a, x = 0, y = 0;
+		e = e || window.event;
+		/* Get the x and y positions of the image: */
+		a = img.getBoundingClientRect();
+		/* Calculate the cursor's x and y coordinates, relative to the image: */
+		x = e.pageX - a.left;
+		y = e.pageY - a.top;
+		/* Consider any page scrolling: */
+		x = x - window.pageXOffset;
+		y = y - window.pageYOffset;
+		return {x : x, y : y};
+	}
+} 
 
 
 // Builds HTML for the categories page based on the data
@@ -68,32 +151,19 @@ function buildAndShowCategoriesHTML (categories) {
 function buildOptionsView(categoriesTitleHtml, categories){
 	console.log("In buildOptionsView: Categories: " + categories[0].category);
 	var finalHtml = "";
-	const arreglosOptions = {
-		title: ["Rosas", "Pareja"],
-		code: ["RS", "SO"]
-	};
 
-	const decoOptions = {
-		title: ["Cartoons", "Ninos/Ninas"],
-		code: ["CT", "NN"]
-	};
-
-	const postreOptions = {
-		title: ["Dulce", "Salado"],
-		code: ["SW", "ST"]
-	};
 
 	var currOptions;
 
 	switch(categories[0].category){
 		case 'decoraciones':
-			currOptions = decoOptions;
+			currOptions = $aradeco.decoOptions;
 			break;
 		case 'arreglos':
 			currOptions = arreglosOptions;
 			break;
 		case 'postres':
-			currOptions = postreOptions;
+			currOptions = apostreOptions;
 			break;
 		default:
 			currOptions = [];
@@ -150,36 +220,44 @@ function buildCategoriesViewHtml(categories, categoriesTitleHtml, categoryHtml) 
 aradeco.loadItem = function (itemID) {
 	showLoading("#main-content");
 	$ajaxUtils.sendGetRequest(itemID, buildAndShowSingleItem, true);
+
 }
 
 function buildAndShowSingleItem(itemObj) {
 	$ajaxUtils.sendGetRequest(singleItemHtmlUrl, function(singleItemHtml){
 
-		finalHtml = "<div class='row'>";
+		finalHtml = "<div id='item-row' class='row'>";
 
 		var html = singleItemHtml;
 		var title = itemObj.title;
 		var desc = itemObj.des;
 		var category = itemObj.category;
 		var imgSrc = itemObj.imgSrc;
-
 		html = insertProperty(html, "title", title);
 		html = insertProperty(html, "category", category);
 		html = insertProperty(html, "img", imgSrc);
 
 		finalHtml += html;
-
 		finalHtml += "</div>";
 		insertHTML("#main-content", finalHtml);
+		var h = document.getElementById("myimage").clientHeight;
+		var w = document.getElementById("myimage").clientWidth;
+		$aradeco.zoomIn("myimage", "myresult", w, h); 
 	});
 }
 
 aradeco.loadOptions = function(checkBox) {
-	const optionsList = ["NN", "CT"];
+	var optionsList;
+	if(($.inArray(checkBox.value, decoOptions.code)) != -1){
+		optionsList = decoOptions.code;
+	} else if (($.inArray(checkBox.value, arreglosOptions.code)) != -1){
+		optionsList = arreglosOptions.code;
+	}
 	var numChecked = document.querySelectorAll('input[type="checkbox"]:checked').length; //number of curr checked boxes
 
 	if(checkBox.checked){
     	if(numChecked == 1){//Only Display checked option, removed the rest
+    		console.log("In aradeco.loadOptions: optionsList.length= " + optionsList.length);
     		for(var i=0; i < optionsList.length; i++){
     			if(!(checkBox.value == optionsList[i]) && ($("."+optionsList[i]).length)) {
     				$("."+optionsList[i]).remove();
@@ -226,12 +304,37 @@ function buildAndShowOptions(optionsList){
 
 // Keep Navigaction var visible after scrolling past the header
 $(global).bind('scroll', function() {
-    var navHeight = 130; // custom nav height
-    ($(global).scrollTop() > navHeight) ? 
-        $('#main-bar').addClass('fixed-top') :
-        $('#main-bar').removeClass('fixed-top');
+    var navHeight = 110; // custom nav height
+    if($(global).scrollTop() > navHeight){
+    	$('#main-bar').addClass('fixed-top');
+    } else {
+    	$('#main-bar').removeClass('fixed-top');
+    }
+        
 });
 
+
+
+
+
+const arreglosOptions = {
+	title: ["Rosas", "Pareja", "Hombres", "Botana", "Funeral", "Centro Mesa", "Ramos", "ST", "SW"],
+	code: ["RS", "SO", "ML", "SN", "FN", "CT", "BQ", "ST", "SW"]
+};
+
+const decoOptions = {
+	title: ["Cartoons", "Ninos/Ninas"],
+	code: ["CT", "NN"]
+};
+
+const postreOptions = {
+	title: ["Dulce", "Salado"],
+	code: ["SW", "ST"]
+};
+
+aradeco.decoOptions = decoOptions;
+aradeco.postreOptions = postreOptions;
+aradeco.arreglosOptions = arreglosOptions;
 
 
 global.$aradeco = aradeco;
@@ -275,7 +378,7 @@ function testFunction(){
 		}
 		newT = "arreglo-0";
 	}*/
-
+/*
 	var db = firebase.firestore();
 
 	var docTitle = "arreglo-00";
@@ -291,7 +394,7 @@ function testFunction(){
 		.then(function(){
 			console.log("itemID: " + itemID)
 		});
-	}
+	}*/
 
 
 /*	var db = firebase.firestore();

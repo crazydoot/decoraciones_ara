@@ -189,9 +189,8 @@ h4 {
 
 /*------- DECORACIONES PAGE -----------------*/
 
-#main-row.row {
-	margin: 0px 10px 0px 10px;
-	min-height: 450px;
+#item-row .row {
+	min-height: 1200px;
 }
 
 #selectable-item:hover{
@@ -228,7 +227,6 @@ h4 {
 
 .img-responsive {
 	margin-left: auto;
-	margin-top: 30px;
 	margin-right: auto;
 	width: 100%;
 }
@@ -256,6 +254,10 @@ h4 {
 	min-height: 450px;
 	font-size: 0;
 }
+
+#gallery_01 img{border:2px solid white;}
+
+.active img{border:2px solid #333 !important;}
 
 .entrega-envio {
 	position: absolute;
@@ -300,4 +302,30 @@ h4 {
     	margin-bottom: 30px;
     	text-align: center;
     }
+}
+
+.img-zoom-container {
+  position: relative;
+  display: inline-block;
+}
+
+.img-zoom-lens {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  /*set the size of the lens:*/
+  width: 100px;
+  height: 100px;
+}
+
+.img-zoom-result {
+	position: absolute;
+	right: 5;
+	top: 0;
+	margin-top: 52px;
+	padding: 2em;
+	z-index: 5;
+	border: 1px solid #d4d4d4;
+	/*set the size of the result div:*/
+	width: 300px;
+	height: 300px;
 }
