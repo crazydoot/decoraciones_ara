@@ -7,6 +7,9 @@
 	float: right;
 }
 
+a[href^="tel:"] {
+	font-family: 'Redressed', cursive;
+}
 
 #header-contact a {
 	color: #f2de43 !important;
@@ -29,6 +32,17 @@
 	color: white;
 	font-weight: bolder;
 } 
+#call-btn {
+	border: 3px solid #F243C1;
+	margin: 0px 10px 5px 10px;
+}
+
+#call-btn > a {
+	display: block;
+	font-size: 1.5em;
+    background-color: #44F275;
+	color: #F243C1;
+}
 
 header {
 	height: 180px;
@@ -36,15 +50,28 @@ header {
 	background-color: #F243C1;
 }
 
-.navbar {
-	background-color: #F243C1;
+#bar-wrap {
+	background-color: white;
+	padding: 5px 0px 5px 0px;
+}
+
+#main-bar {
+	background: linear-gradient(89.84deg, rgba(248, 248, 248, 0.5) 30.55%, 
+		rgba(255, 255, 255, 0) 100%, rgba(250, 250, 250, 0.34122) 80%), #F243C1;
 	border: 1px solid black;
-	margin: 5px 10px 5px 10px;
+	width: 100%;
+	margin: 0px 10px 0px 10px;
+}
+
+#v-hr {
+	border-left: 0.1px solid #000;
+	height: 40px;
+	margin-top: 7px;
 }
 
 nav .navbar-nav li a{
   color: black !important;
-  text-align: center;
+  text-align: centers;
 }
 
 button.navbar-toggler {
@@ -56,8 +83,8 @@ button.navbar-toggler {
 	background: url("../media/images/navbar-button.png") no-repeat !important;
 }
 
-.nav-link {
-	margin: 0px 30% 0px 30%;
+.nav-item {
+	margin: 0px 25px 0px 25px;
 	font-size: 1.5em;
 }
 
@@ -80,14 +107,12 @@ button.navbar-toggler {
 
 
 /****** Main Content - HOME Page *********/
-.jumbotron{
-}
 
   /* Make the image fully responsive */
-  .carousel-inner img {
-      width: 100%;
-      height: 100%;
-  }
+.carousel-inner img {
+  width: 100%;
+  height: 100%;
+}
 
 #deco-tile, #postres-tile, #arreglos-tile {
 	height: 200px;
@@ -164,9 +189,8 @@ h4 {
 
 /*------- DECORACIONES PAGE -----------------*/
 
-#main-row.row {
-	margin: 0px 10px 0px 10px;
-	min-height: 450px;
+#item-row .row {
+	min-height: 1200px;
 }
 
 #selectable-item:hover{
@@ -175,7 +199,7 @@ h4 {
 
 #selectable-item:hover span{
 	font-weight: bold;
-	font-size: 1.2em;
+	font-size: 18px;
 }
 
 #selectable-item {
@@ -183,8 +207,9 @@ h4 {
 	position: relative;
 	overflow: hidden;
 	text-align: center;
-	border: 2px solid #F243C1;
 	display: inline-block;
+	min-height: 200px;
+	max-height: 250px;
 }
 
 #selectable-item span{
@@ -195,17 +220,50 @@ h4 {
 	width: 100%;
 	text-transform: uppercase;
   	background-color: #44F275;
+  	font-size: 12px;
   	color: #fff;
 	opacity: .8;
 }
 
-#selectable-item > img {
-	display: block;
+.img-responsive {
 	margin-left: auto;
 	margin-right: auto;
+	width: 100%;
+}
+#opciones-navbar {
+	padding-top: 8px;
+	margin-bottom: -40px;
 }
 
-/* DECORACIOENS->ITEMS */
+#nav-btn-container {
+	text-align: center;
+	align-items: center;
+}
+
+#nav-btn-container button{
+	color: black;
+	background-color: transparent;
+	margin: 0px;
+}
+
+#collapsed-options {
+	margin-bottom: 40px;
+}
+/*--------------- DECORACIOENS->ITEMS --------------*/
+#items-section {
+	min-height: 450px;
+	font-size: 0;
+}
+
+#gallery_01 img{border:2px solid white;}
+
+.active img{border:2px solid #333 !important;}
+
+.entrega-envio {
+	position: absolute;
+	bottom: 0;
+}
+
 
 
 /*-------------- MEDIA QUERIES ------------*/
@@ -221,23 +279,53 @@ h4 {
 	.contact-icon {
 		font-size: 1.6em;
 	}
+
+	#home-carousel .carousel-inner .active img{
+		max-height: 950px;
+	}
 }
 
 /***** Medium up to Large ------*/
-@media (min-width: 769px) and (max-width: 992px) {
+@media (min-width: 768px) and (max-width: 992px) {
 	.contact-icon {
 		font-size: 1.5em;
-	}
-
-	#opciones-navbar ul{
-		display: none;
 	}
 }
 
 /****** Small ----------*/
-@media (max-width: 769px) {
+@media (max-width: 768px) {
 	.contact-icon {
 		font-size: 1.5em;
 		margin: auto;
 	}
+	.panel-footer section {
+    	margin-bottom: 30px;
+    	text-align: center;
+    }
+}
+
+.img-zoom-container {
+  position: relative;
+  display: inline-block;
+}
+
+.img-zoom-lens {
+  position: absolute;
+  border: 1px solid #d4d4d4;
+  /*set the size of the lens:*/
+  width: 100px;
+  height: 100px;
+}
+
+.img-zoom-result {
+	position: absolute;
+	right: 5;
+	top: 0;
+	margin-top: 52px;
+	padding: 2em;
+	z-index: 5;
+	border: 1px solid #d4d4d4;
+	/*set the size of the result div:*/
+	width: 300px;
+	height: 300px;
 }
