@@ -159,6 +159,62 @@ button.navbar-toggler {
 }/******* END OF HOME PAGE->MAIN CONTENT */
 
 
+
+/**** Options View ********/
+
+
+	ul.checkboxList {
+		list-style: none;
+	}
+
+	ul.checkboxList li label{
+		display: inline-block;
+		background-color: #44F275;
+		border: 2px solid #F243C1;
+		border-radius: 15px;
+		white-space: nowrap;
+		margin: 3px 0px;
+	    -webkit-touch-callout: none;
+	    -webkit-user-select: none;
+	    -moz-user-select: none;
+	    -ms-user-select: none;
+	    user-select: none;
+	    -webkit-tap-highlight-color: transparent;
+	    transition: all .2s;
+	}
+	ul.checkboxList li label {
+    	padding: 8px 12px;
+    	cursor: pointer;
+	}
+
+	ul.checkboxList li input[type="checkbox"]:checked + label::before {
+	    content: "\f00c";
+	    transform: rotate(-360deg);
+	    transition: transform .3s ease-in-out;
+	}
+
+	ul.checkboxList li input[type="checkbox"]:checked + label {
+	    border: 2px solid #1bdbf8;
+	    background-color: #12bbd4;
+	    color: #fff;
+	    transition: all .2s;
+	}
+
+	ul.checkoxList li input[type="checkbox"] {
+		position: absolute;
+		opacity: 0;
+	}
+
+	ul.checkboxList li input[type="checkbox"]:focus + label {
+		border: 2px solid #e9a1ff;
+	}
+
+/***** END OF OPTIONS VIEW*/
+
+
+
+
+
 /* FOOTER */
 .panel-footer {
 	margin-top: 30px;
@@ -189,8 +245,8 @@ h4 {
 
 /*------- DECORACIONES PAGE -----------------*/
 
-#item-row .row {
-	min-height: 1200px;
+#item-row{
+	min-height: 450px;
 }
 
 #selectable-item:hover{
@@ -232,7 +288,6 @@ h4 {
 }
 #opciones-navbar {
 	padding-top: 8px;
-	margin-bottom: -40px;
 }
 
 #nav-btn-container {
@@ -246,9 +301,7 @@ h4 {
 	margin: 0px;
 }
 
-#collapsed-options {
-	margin-bottom: 40px;
-}
+
 /*--------------- DECORACIOENS->ITEMS --------------*/
 #items-section {
 	min-height: 450px;
@@ -292,6 +345,14 @@ h4 {
 	}
 }
 
+/******* All up to Large*/
+@media (max-width: 992px) {
+	ul.checkboxList li{
+		display: inline;
+	}
+}
+
+
 /****** Small ----------*/
 @media (max-width: 768px) {
 	.contact-icon {
@@ -301,6 +362,16 @@ h4 {
 	.panel-footer section {
     	margin-bottom: 30px;
     	text-align: center;
+    }
+    #item-row {
+    	min-height: 620px;
+    }
+    #itm-des-container {
+    	min-height: 200px;
+    }
+
+    .item-footer{
+    	font-size: .85em;
     }
 }
 
