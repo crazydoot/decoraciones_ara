@@ -10,6 +10,9 @@ var categoryHTML  = "snippets/category-snippet.html";
 var singleItemHtmlUrl = "snippets/singleItem-snippet.html";
 var testUrl = "snippets/testSnippet.html";
 var currWidth = 0;
+var numOfTiles = 0;
+var debug = true;
+var checkedOptions = [];
 
 var insertHTML = function (selector, html) {
 	var element = document.querySelector(selector);
@@ -103,7 +106,7 @@ function buildOptionsView(categoriesTitleHtml, categories){
 
 	for(var i=0; i < currOptions.title.length; i++){
 		var html = "<li> \
-						<input type='checkbox' id='{{OptID}}' onchange='$aradeco.test(this);' value='{{OptID}}' style='display: none;'> \
+						<input type='checkbox' id='{{OptID}}' onchange='$aradeco.loadOptions(this);' value='{{OptID}}' style='display: none;'> \
 						<label for='{{OptID}}'> {{opcion}} </label> \
 					</li>";
 	
@@ -114,7 +117,7 @@ function buildOptionsView(categoriesTitleHtml, categories){
 
 
 		html = "<li> \
-					<input type='checkbox' id='{{OptID}}2' onchange='$aradeco.test(this);' value='{{OptID}}' style='display: none;'> \
+					<input type='checkbox' id='{{OptID}}2' onchange='$aradeco.loadOptions(this);' value='{{OptID}}' style='display: none;'> \
 					<label for='{{OptID}}'> \
 						{{opcion}} \
 					</label> \
@@ -139,23 +142,28 @@ function buildCategoriesViewHtml(categories, categoriesTitleHtml, categoryHtml) 
   finalHtml += "<section id='items-section' class='col-sm-12 col-md-12 col-lg-10'>";
 
   // Loop over categories
-  for (var i = 0; i < categories.length; i++) {
+  for(numOfTiles = 0; numOfTiles < categories.length; numOfTiles++) {
     // Insert category values
     var html = categoryHtml;
-    var title = "" + categories[i].title;
-    var category = categories[i].category;
-    var imgSrc = categories[i].imgSrc;
-    var itmID = categories[i].itemID;
-    var options = categories[i].opciones[0];
-
+    var title = "" + categories[numOfTiles].title;
+    var category = categories[numOfTiles].category;
+    var imgSrc = categories[numOfTiles].imgSrc;
+    var itmID = categories[numOfTiles].itemID;
+    var options = "";
+    categories[numOfTiles].opciones.forEach(function(item, index){
+    	options += item + " ";
+    });
+    
     html = insertProperty(html, "title", title);
     html = insertProperty(html, "category", category);
     html = insertProperty(html, "itmID", itmID);
     html = insertProperty(html, "img", imgSrc);
     html = insertProperty(html, "opciones", options);
+    html = insertProperty(html, "num", numOfTiles);
     finalHtml += html;
   }
 
+  if(debug){console.log("In buildCategoriesViewHtml: numOfTiles="+numOfTiles);}
   finalHtml += "</section> </div>";
   return finalHtml;
 }
@@ -200,22 +208,54 @@ aradeco.loadOptions = function(checkBox) {
 		optionsList = arreglosOptions.code;
 	}
 	var numChecked = document.querySelectorAll('input[type="checkbox"]:checked').length; //number of curr checked boxes
+	var checked = checkBox.checked;
 
-	if(checkBox.checked){
-    	if(numChecked == 1){//Only Display checked option, removed the rest
-    		console.log("In aradeco.loadOptions: optionsList.length= " + optionsList.length);
-    		for(var i=0; i < optionsList.length; i++){
-    			if(!(checkBox.value == optionsList[i]) && ($("."+optionsList[i]).length)) {
-    				$("."+optionsList[i]).remove();
-    			}
-    		}
-    	}
-	} else {
-		if(numChecked == 0){
-			console.log("No Boxes Selected");
-			$ajaxUtils.sendGetRequest(checkBox.value, buildAndShowOptions, true);
+	// Checked if current items displayed have the class checked/unchecked
+	// If so hide item or show all if all options are unchecked
+	for(var i=0; i<numOfTiles; i++){
+		if(checked){
+	    	if(numChecked == 1){//Only Display checked option, removed the rest
+	    		if(!($("#"+i).hasClass(checkBox.value))){
+	    			$("#"+i).addClass("d-none");
+	    		}
+	    	}
+		} else {
+			if(numChecked == 0){
+				if($("#"+i).hasClass("d-none")){
+					$("#"+i).removeClass("d-none");
+				}
+			} else{
+				if($("#"+i).hasClass(checkBox.value)){
+					$("#"+i).addClass("d-none");
+				}
+			}
 		}
 	}
+
+	// Add or remove checked.value to the array of currently
+	// selected options
+	if(checked){
+		checkedOptions.push(checkBox.value);
+	} else {
+		checkedOptions.forEach(function(item, index){
+			if(item === checkBox.value){
+				checkedOptions.splice(index, 1);
+			}
+		});
+	}
+
+	// Checked if a still checked item was removed due to sharing
+	// options with a prev unselected item
+	checkedOptions.forEach(function(item, index){
+		console.log("checkedOptions[i]:"+item);
+		if($("section ."+checkedOptions[index]).hasClass("d-none")){
+			console.log(item)
+			$("."+item).removeClass("d-none");
+		}
+	});
+
+
+
 }
 
 function buildAndShowOptions(optionsList){
@@ -363,13 +403,13 @@ $(global).resize(function() {
 
 
 const arreglosOptions = {
-	title: ["Rosas", "Pareja", "Hombres", "Botana", "Funeral", "Centro Mesa", "Ramos", "ST", "SW", "Tulipanes", "Especial", "Chico", "Peluche"],
-	code: ["RS", "SO", "ML", "SN", "FN", "CT", "BQ", "ST", "SW", "TP", "SP", "SM", "SA"]
+	title: ["Rosas", "Pareja", "Hombres", "Botana", "Funeral", "Centro Mesa", "Ramos", "Tulipanes", "Especial", "Chico", "Peluche"],
+	code: ["RS", "SO", "ML", "SN", "FN", "CT", "BQ", "TP", "SP", "SM", "SA"]
 };
 
 const decoOptions = {
-	title: ["Cartoons", "Ninos/Ninas"],
-	code: ["CT", "NN"]
+	title: ["Cartoons", "Ninos/Ninas", "Animales"],
+	code: ["CT", "NN", "AN"]
 };
 
 const postreOptions = {

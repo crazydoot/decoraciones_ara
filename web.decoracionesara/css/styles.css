@@ -154,6 +154,10 @@ button.navbar-toggler {
 	transform: translate(-50%, -50%);
 }
 
+.show-item {
+	display: inline-block;
+}
+
 #home-carousel {
 	margin-bottom: 15px;
 }/******* END OF HOME PAGE->MAIN CONTENT */
@@ -249,16 +253,16 @@ h4 {
 	min-height: 450px;
 }
 
-#selectable-item:hover{
+.selectable-item:hover{
 	opacity: 0.6;
 }
 
-#selectable-item:hover span{
+.selectable-item:hover span{
 	font-weight: bold;
 	font-size: 18px;
 }
 
-#selectable-item {
+.selectable-item {
 	padding-top: 10px;
 	position: relative;
 	overflow: hidden;
@@ -268,7 +272,7 @@ h4 {
 	max-height: 250px;
 }
 
-#selectable-item span{
+.selectable-item span{
 	position: absolute;
 	bottom: 0;
 	right: 0;
