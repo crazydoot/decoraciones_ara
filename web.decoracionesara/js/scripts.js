@@ -5,16 +5,19 @@ var aradeco = {};
 
 var homeHTML = "snippets/home-snippet.html";
 var allCategoriesURL = "";
-var categoriesTitleUrl = "snippets/category-title.html";
+var categoriesTitleUrl = "snippets/categoryOptions-snippet.html";
 var categoryHTML  = "snippets/category-snippet.html";
 var singleItemHtmlUrl = "snippets/singleItem-snippet.html";
+var testUrl = "snippets/testSnippet.html";
+var currWidth = 0;
+var numOfTiles = 0;
+var debug = false;
+var checkedOptions = [];
 
 var insertHTML = function (selector, html) {
 	var element = document.querySelector(selector);
 	element.innerHTML = html;
 }
-
-
 
 var showLoading = function (selector) {
 	var html = "<div class='text-center'>";
@@ -28,10 +31,87 @@ var insertProperty = function (string, propName, propValue){
 	return string;
 }
 
+var isInt = function(value) {
+  var x;
+  if (isNaN(value)) {
+    return false;
+  }
+  x = parseFloat(value);
+  return (x | 0) === x;
+}
+
+// Load and url changes
+var loadURL = function(url){
+	var currURL = url.split('/');
+	var catID = currURL[0];
+	showLoading("#main-content");
+	console.log("MAP:" + url.split('/').length);
+	var states = {
+
+		// Home Page
+		'#home': function() {
+			$ajaxUtils.sendGetRequest(homeHTML, function (responseText) {
+				document.querySelector("#main-content").innerHTML = responseText;
+				currWidth = $(global).width();
+				//history.pushState(null, null, "home.html");
+			},
+			false);
+		}, 
+
+		// Also Home 
+		'': function() {
+			$ajaxUtils.sendGetRequest(homeHTML, function (responseText) {
+				document.querySelector("#main-content").innerHTML = responseText;
+				currWidth = $(global).width();
+			},
+			false);
+		},
+
+		// Load Category
+		'#decoraciones': function() {
+			if((currURL.length) > 1){
+				if(isInt(currURL[1])){
+					$aradeco.loadItem(currURL[1]);
+				}
+			}else{
+				$aradeco.loadCategory(1);
+			}
+		},
+		'#arreglos': function() {
+			if((currURL.length) > 1){
+				if(isInt(currURL[1])){
+					$aradeco.loadItem(currURL[1]);
+				}
+			}else{
+				$aradeco.loadCategory(2);
+			}
+		},
+		'#postres': function() {
+			if((currURL.length) > 1){
+				if(isInt(currURL[1])){
+					$aradeco.loadItem(currURL[1]);
+				}
+			}else{
+				$aradeco.loadCategory(3);
+			}
+		}
+
+	}
+
+	if(states[catID]){
+		states[catID]();
+	} else {
+		showLoading("#main-content");
+	}
+
+}
+
 document.addEventListener("DOMContentLoaded", function(event){
 	showLoading("#main-content");
 	$ajaxUtils.sendGetRequest(homeHTML, function (responseText) {
 		document.querySelector("#main-content").innerHTML = responseText;
+		currWidth = $(global).width();
+		//history.pushState(null, null, "home.html");
 	},
 	false);
 });
@@ -41,11 +121,261 @@ document.addEventListener("DOMContentLoaded", function(event){
 aradeco.loadCategory = function (catID) {
 	showLoading("#main-content");
 	$ajaxUtils.sendGetRequest(catID, buildAndShowCategoriesHTML, true)
+
 }
 
-aradeco.zoomIn = function(imgID, resultID, width, height) {
-	console.log("INIT");
 
+// Builds HTML for the categories page based on the data
+// from the server
+function buildAndShowCategoriesHTML (categories) {
+	if(categories == undefined) {
+		console.log("Categories is undefined!");
+	} else {
+	  // Load title snippet of categories page
+		$ajaxUtils.sendGetRequest(categoriesTitleUrl, function (categoriesTitleHtml) {
+		    	  // Retrieve single category snippet
+		    	categoriesTitleHtml = buildOptionsView(categoriesTitleHtml, categories);
+		    	$ajaxUtils.sendGetRequest(categoryHTML, function (categoryHtml) {
+		      		var categoriesViewHtml = buildCategoriesViewHtml(categories, categoriesTitleHtml, categoryHtml);
+		        	insertHTML("#main-content", categoriesViewHtml);
+		        	//history.pushState(null, null, categories[0].category);
+		        	if($(global).width() > 992){
+		        		$("#optsBtn").trigger('click');
+		        	}
+		    	},
+		    	false);
+	    },
+	    false);
+	}
+}
+
+
+function buildOptionsView(categoriesTitleHtml, categories){
+	if(debug){
+		console.log("In buildOptionsView: Categories: " + categories[0].category);
+	}
+
+	var finalSideHtml = "";
+	var collapsedHtml = "";
+
+	var currOptions;
+
+	switch(categories[0].category){
+		case 'decoraciones':
+			currOptions = $aradeco.decoOptions;
+			break;
+		case 'arreglos':
+			currOptions = arreglosOptions;
+			break;
+		case 'postres':
+			currOptions = postreOptions;
+			break;
+		default:
+			currOptions = [];
+	}
+
+	for(var i=0; i < currOptions.title.length; i++){
+		var html = "<li> \
+						<input type='checkbox' id='{{OptID}}' onchange='$aradeco.loadOptions(this);' value='{{OptID}}' style='display: none;'> \
+						<label for='{{OptID}}'> {{opcion}} </label> \
+					</li>";
+	
+		html = insertProperty(html, "opcion", currOptions.title[i]);
+		html = insertProperty(html, "OptID", currOptions.code[i]);
+
+		finalSideHtml += html;
+
+
+		html = "<li> \
+					<input type='checkbox' id='{{OptID}}2' onchange='$aradeco.loadOptions(this);' value='{{OptID}}' style='display: none;'> \
+					<label for='{{OptID}}'> \
+						{{opcion}} \
+					</label> \
+				</li>";
+
+		html = insertProperty(html, "opcion", currOptions.title[i]);
+		html = insertProperty(html, "OptID", currOptions.code[i]);
+
+		collapsedHtml += html;
+	}
+	var categoriesTitleUpdatedHtml = insertProperty(categoriesTitleHtml, "list-items", finalSideHtml);
+
+	return categoriesTitleUpdatedHtml;
+}
+
+
+// Using categories data and snippets html
+// build categories view HTML to be inserted into page;
+function buildCategoriesViewHtml(categories, categoriesTitleHtml, categoryHtml) {
+
+  var finalHtml = categoriesTitleHtml;
+  finalHtml += "<section id='items-section' class='col-sm-12 col-md-12 col-lg-10'>";
+
+  // Loop over categories
+  for(numOfTiles = 0; numOfTiles < categories.length; numOfTiles++) {
+    // Insert category values
+    var html = categoryHtml;
+    var title = "" + categories[numOfTiles].title;
+    var category = categories[numOfTiles].category;
+    var imgSrc = categories[numOfTiles].imgSrc;
+    var itmID = categories[numOfTiles].itemID;
+    var options = "";
+    categories[numOfTiles].opciones.forEach(function(item, index){
+    	options += item + " ";
+    });
+    
+    html = insertProperty(html, "title", title);
+    html = insertProperty(html, "category", category);
+    html = insertProperty(html, "itmID", itmID);
+    html = insertProperty(html, "img", imgSrc);
+    html = insertProperty(html, "opciones", options);
+    html = insertProperty(html, "num", numOfTiles);
+    finalHtml += html;
+  }
+
+  if(debug){console.log("In buildCategoriesViewHtml: numOfTiles="+numOfTiles);}
+  finalHtml += "</section> </div>";
+  return finalHtml;
+}
+
+
+aradeco.loadItem = function (itemID) {
+	showLoading("#main-content");
+	console.log(itemID + "{{{{");
+	$ajaxUtils.sendGetRequest(itemID, buildAndShowSingleItem, true);
+/*	//history.pushState({
+		loadID: itemID
+	}, null, "item-num/"+itemID);*/
+}
+
+function buildAndShowSingleItem(itemObj, itmFooter) {
+	$ajaxUtils.sendGetRequest(singleItemHtmlUrl, function(singleItemHtml){
+
+		finalHtml = "<div id='item-row' class='row'>";
+
+		var html = singleItemHtml;
+		var title = itemObj.title;
+		var desc = itemObj.des;
+		var category = itemObj.category;
+		var imgSrc = itemObj.imgSrc;
+		html = insertProperty(html, "title", title);
+		html = insertProperty(html, "category", category);
+		html = insertProperty(html, "img", imgSrc);
+		html = insertProperty(html, "desc", desc);
+		html = insertProperty(html, "itm-footer", itmFooter);
+
+		finalHtml += html;
+		finalHtml += "</div>";
+		insertHTML("#main-content", finalHtml);
+		var h = document.getElementById("myimage").clientHeight;
+		var w = document.getElementById("myimage").clientWidth;
+		$aradeco.zoomIn("myimage", "myresult", w, h); 
+
+		//history.pushState(null, null, category+"/"+"item/"+itemObj.itemID);
+	});
+}
+
+aradeco.loadOptions = function(checkBox) {
+	var optionsList;
+	if(($.inArray(checkBox.value, decoOptions.code)) != -1){
+		optionsList = decoOptions.code;
+	} else if (($.inArray(checkBox.value, arreglosOptions.code)) != -1){
+		optionsList = arreglosOptions.code;
+	}
+	var numChecked = document.querySelectorAll('input[type="checkbox"]:checked').length; //number of curr checked boxes
+	var checked = checkBox.checked;
+
+	// Checked if current items displayed have the class checked/unchecked
+	// If so hide item or show all if all options are unchecked
+	for(var i=0; i<numOfTiles; i++){
+		if(checked){
+	    	if(numChecked == 1){//Only Display checked option, removed the rest
+	    		if(!($("#"+i).hasClass(checkBox.value))){
+	    			$("#"+i).addClass("d-none");
+	    		}
+	    	}
+		} else {
+			if(numChecked == 0){
+				if($("#"+i).hasClass("d-none")){
+					$("#"+i).removeClass("d-none");
+				}
+			} else{
+				if($("#"+i).hasClass(checkBox.value)){
+					$("#"+i).addClass("d-none");
+				}
+			}
+		}
+	}
+
+	// Add or remove checked.value to the array of currently
+	// selected options
+	if(checked){
+		checkedOptions.push(checkBox.value);
+	} else {
+		checkedOptions.forEach(function(item, index){
+			if(item === checkBox.value){
+				checkedOptions.splice(index, 1);
+			}
+		});
+	}
+
+	// Checked if a still checked item was removed due to sharing
+	// options with a prev unselected item
+	checkedOptions.forEach(function(item, index){
+		if(debug){console.log("checkedOptions[i]:"+item);}
+		if($("section ."+checkedOptions[index]).hasClass("d-none")){
+			$("."+item).removeClass("d-none");
+		}
+	});
+}
+
+function buildAndShowOptions(optionsList){
+	//console.log(JSON.stringify(optionsList));
+	$ajaxUtils.sendGetRequest(categoryHTML, function (responseText) {
+		var numItem = optionsList.length;
+		var finalHtml;
+		for(var i=0; i < numItem; i++){
+
+			var html = responseText;
+			var title = optionsList[i].title;
+			var category = optionsList[i].category;
+			var imgSrc = optionsList[i].imgSrc;
+			var itmID = optionsList[i].itemID;
+			var options = optionsList[i].opciones;
+
+			html = insertProperty(html, "title", title);
+			html = insertProperty(html, "category", category);
+			html = insertProperty(html, "img", imgSrc);
+			html = insertProperty(html, "itmID", itmID);
+			html = insertProperty(html, "opciones", options);
+
+			finalHtml += html;
+		}
+		if(debug){console.log("In buildAndShowOptions: numItem = " + numItem);}	
+		$("#items-section").append(finalHtml);
+	},
+	false);
+}
+
+// TESTING // 
+aradeco.test = function(checkBox){
+	console.log("TEST***********---------------");
+	if(checkBox.checked){
+		console.log("CHECKED", checkBox.value);
+		$('#'+checkBox.value+"2").addClass("checkedBox");
+	} else {
+		console.log("UNCHECKED");
+	}
+}
+aradeco.loadTest = function () {
+	showLoading("#main-content");
+	$ajaxUtils.sendGetRequest(testUrl, function(responseText){
+		document.querySelector("#main-content").innerHTML = responseText;
+	});
+}
+
+
+aradeco.zoomIn = function(imgID, resultID, width, height) {
 	var img, lens, result, bck_x, bck_y, imgWidth, imgHeight;
 	img = document.getElementById(imgID);
 	result = document.getElementById(resultID);
@@ -60,15 +390,17 @@ aradeco.zoomIn = function(imgID, resultID, width, height) {
 
 	/* Wait for image to load, then create lense and set up zoom */
 	img.onload = function(){
-		console.log("Image WIdth:5 " + img.height);
-		console.log("Image WIdth:5 " + img.width);
 		imgWidth = img.width;
 		imgHeight = img.height;
 
 		bck_x = imgWidth*cx;
 		bck_y = imgHeight *cy;
 
+		if(debug){	
 		console.log("Image bck: " + imgWidth + "---- " + imgHeight);
+		console.log("Image WIdth:5 " + img.height);
+		console.log("Image WIdth:5 " + img.width);}
+
 
 		result.style.backgroundImage = "url('" + img.src + "')";
 		result.style.backgroundSize = (bck_x) + "px " + (bck_y) + "px";
@@ -81,7 +413,6 @@ aradeco.zoomIn = function(imgID, resultID, width, height) {
 
 
 		$('.img-zoom-lens').hover(function(){
-			console.log('in Hover');
 			$('#myresult').css('display', 'block');
 			$('#myresult').css('float', 'left');			
 		},
@@ -126,185 +457,9 @@ aradeco.zoomIn = function(imgID, resultID, width, height) {
 	}
 } 
 
-
-// Builds HTML for the categories page based on the data
-// from the server
-function buildAndShowCategoriesHTML (categories) {
-	console.log(categories,length)
-	if(categories == undefined) {
-		console.log("Categories is undefined!");
-	} else {
-	  // Load title snippet of categories page
-		$ajaxUtils.sendGetRequest(categoriesTitleUrl, function (categoriesTitleHtml) {
-	    	  // Retrieve single category snippet
-	    	categoriesTitleHtml = buildOptionsView(categoriesTitleHtml, categories);
-	    	$ajaxUtils.sendGetRequest(categoryHTML, function (categoryHtml) {
-	      		var categoriesViewHtml = buildCategoriesViewHtml(categories, categoriesTitleHtml, categoryHtml);
-	        	insertHTML("#main-content", categoriesViewHtml);
-	    	},
-	    	false);
-	    },
-	    false);
-	}
-}
-
-function buildOptionsView(categoriesTitleHtml, categories){
-	console.log("In buildOptionsView: Categories: " + categories[0].category);
-	var finalHtml = "";
-
-
-	var currOptions;
-
-	switch(categories[0].category){
-		case 'decoraciones':
-			currOptions = $aradeco.decoOptions;
-			break;
-		case 'arreglos':
-			currOptions = arreglosOptions;
-			break;
-		case 'postres':
-			currOptions = apostreOptions;
-			break;
-		default:
-			currOptions = [];
-	}
-
-	for(var i=0; i < currOptions.title.length; i++){
-		var html = "<li> <label> {{opcion}} </label> \
-						<input type='checkbox' name='selected' value='{{OptID}}' \
-						onclick='$aradeco.loadOptions(this);'> 			\
-					</li>";
-	
-		html = insertProperty(html, "opcion", currOptions.title[i]);
-		html = insertProperty(html, "OptID", currOptions.code[i]);
-
-		finalHtml += html;
-	}
-	var categoriesTitleUpdatedHtml = insertProperty(categoriesTitleHtml, "list-items", finalHtml);
-
-	return categoriesTitleUpdatedHtml;
-}
-
-
-
-// Using categories data and snippets html
-// build categories view HTML to be inserted into page
-function buildCategoriesViewHtml(categories, categoriesTitleHtml, categoryHtml) {
-
-  var finalHtml = categoriesTitleHtml;
-  finalHtml += "<section id='items-section' class='col-sm-12 col-md-12 col-lg-10'>";
-
-  // Loop over categories
-  for (var i = 0; i < categories.length; i++) {
-    // Insert category values
-    var html = categoryHtml;
-    var title = "" + categories[i].title;
-    var category = categories[i].category;
-    var imgSrc = categories[i].imgSrc;
-    var itmID = categories[i].itemID;
-    var options = categories[i].opciones[0];
-
-    html = insertProperty(html, "title", title);
-    html = insertProperty(html, "category", category);
-    html = insertProperty(html, "itmID", itmID);
-    html = insertProperty(html, "img", imgSrc);
-    html = insertProperty(html, "opciones", options);
-    finalHtml += html;
-  }
-
-  finalHtml += "</section> </div>";
-  return finalHtml;
-}
-
-
-aradeco.loadItem = function (itemID) {
-	showLoading("#main-content");
-	$ajaxUtils.sendGetRequest(itemID, buildAndShowSingleItem, true);
-
-}
-
-function buildAndShowSingleItem(itemObj) {
-	$ajaxUtils.sendGetRequest(singleItemHtmlUrl, function(singleItemHtml){
-
-		finalHtml = "<div id='item-row' class='row'>";
-
-		var html = singleItemHtml;
-		var title = itemObj.title;
-		var desc = itemObj.des;
-		var category = itemObj.category;
-		var imgSrc = itemObj.imgSrc;
-		html = insertProperty(html, "title", title);
-		html = insertProperty(html, "category", category);
-		html = insertProperty(html, "img", imgSrc);
-
-		finalHtml += html;
-		finalHtml += "</div>";
-		insertHTML("#main-content", finalHtml);
-		var h = document.getElementById("myimage").clientHeight;
-		var w = document.getElementById("myimage").clientWidth;
-		$aradeco.zoomIn("myimage", "myresult", w, h); 
-	});
-}
-
-aradeco.loadOptions = function(checkBox) {
-	var optionsList;
-	if(($.inArray(checkBox.value, decoOptions.code)) != -1){
-		optionsList = decoOptions.code;
-	} else if (($.inArray(checkBox.value, arreglosOptions.code)) != -1){
-		optionsList = arreglosOptions.code;
-	}
-	var numChecked = document.querySelectorAll('input[type="checkbox"]:checked').length; //number of curr checked boxes
-
-	if(checkBox.checked){
-    	if(numChecked == 1){//Only Display checked option, removed the rest
-    		console.log("In aradeco.loadOptions: optionsList.length= " + optionsList.length);
-    		for(var i=0; i < optionsList.length; i++){
-    			if(!(checkBox.value == optionsList[i]) && ($("."+optionsList[i]).length)) {
-    				$("."+optionsList[i]).remove();
-    			}
-    		}
-    	}
-
-	} else {
-		if(numChecked == 0){
-			console.log("No Boxes Selected");
-			$ajaxUtils.sendGetRequest(checkBox.value, buildAndShowOptions, true);
-		}
-	}
-}
-
-function buildAndShowOptions(optionsList){
-	//console.log(JSON.stringify(optionsList));
-	$ajaxUtils.sendGetRequest(categoryHTML, function (responseText) {
-		var numItem = optionsList.length;
-		var finalHtml;
-		for(var i=0; i < numItem; i++){
-
-			var html = responseText;
-			var title = optionsList[i].title;
-			var category = optionsList[i].category;
-			var imgSrc = optionsList[i].imgSrc;
-			var itmID = optionsList[i].itemID;
-			var options = optionsList[i].opciones;
-
-			html = insertProperty(html, "title", title);
-			html = insertProperty(html, "category", category);
-			html = insertProperty(html, "img", imgSrc);
-			html = insertProperty(html, "itmID", itmID);
-			html = insertProperty(html, "opciones", options);
-
-			finalHtml += html;
-		}
-		console.log("In buildAndShowOptions: numItem = " + numItem);
-		$("#items-section").append(finalHtml);
-	},
-	false);
-}
-
-
 // Keep Navigaction var visible after scrolling past the header
 $(global).bind('scroll', function() {
-    var navHeight = 110; // custom nav height
+    var navHeight = 95; // custom nav height
     if($(global).scrollTop() > navHeight){
     	$('#main-bar').addClass('fixed-top');
     } else {
@@ -313,18 +468,32 @@ $(global).bind('scroll', function() {
         
 });
 
+$(global).on('hashchange', function(){
+	loadURL(decodeURI(global.location.hash));
+});
+
+$(global).resize(function() {
+	var newWidth = $(global).width();
+	if((newWidth < currWidth) && (newWidth < 992)){
+		$("#collapsed-options").removeClass("show");
+	} else if ((newWidth > currWidth) && (newWidth > 991)){
+		$("#collapsed-options").addClass("show");
+	}
+	currWidth = newWidth;
+});
+
 
 
 
 
 const arreglosOptions = {
-	title: ["Rosas", "Pareja", "Hombres", "Botana", "Funeral", "Centro Mesa", "Ramos", "ST", "SW"],
-	code: ["RS", "SO", "ML", "SN", "FN", "CT", "BQ", "ST", "SW"]
+	title: ["Rosas", "Pareja", "Hombres", "Botana", "Funeral", "Centro Mesa", "Ramos", "Tulipanes", "Especial", "Chico", "Peluche"],
+	code: ["RS", "SO", "ML", "SN", "FN", "CT", "BQ", "TP", "SP", "SM", "SA"]
 };
 
 const decoOptions = {
-	title: ["Cartoons", "Ninos/Ninas"],
-	code: ["CT", "NN"]
+	title: ["Cartoons", "Ninos/Ninas", "Animales"],
+	code: ["CT", "NN", "AN"]
 };
 
 const postreOptions = {
@@ -335,6 +504,8 @@ const postreOptions = {
 aradeco.decoOptions = decoOptions;
 aradeco.postreOptions = postreOptions;
 aradeco.arreglosOptions = arreglosOptions;
+
+
 
 
 global.$aradeco = aradeco;
