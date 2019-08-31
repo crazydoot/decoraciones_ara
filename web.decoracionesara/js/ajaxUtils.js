@@ -118,7 +118,11 @@ function getFiresStoreItem(itemID, handler){
   console.log("Before dbRref: " + idPre + "---" + id);
   var dbRef = dataBase.collection("categorias").doc(category).collection("item-info").doc(idPre+id);
   dbRef.get().then(function(doc){
-    handler(doc.data());
+    var newDbRef = dataBase.collection("categorias").doc(category);
+    newDbRef.get().then(function(doc1){
+      var itemFooter =  doc1.data().footer;
+      handler(doc.data(), itemFooter);
+    })
   });
 }
 
